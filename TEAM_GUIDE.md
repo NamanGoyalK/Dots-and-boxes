@@ -1,10 +1,10 @@
-# 👥 Dots and Boxes AI Platform - Technical Development Guide
+# Dots and Boxes AI Platform: Technical Development Guide
 
-This guide outlines the unified interface, architecture, and developer workflows for each agent in our multi-agent Dots and Boxes platform.
+This guide outlines the unified interface, architecture, and developer workflows for each agent in the multi-agent Dots and Boxes platform.
 
 ---
 
-## 🛠️ Unified Agent Interface (`BaseAgent`)
+## Unified Agent Interface (`BaseAgent`)
 
 Every agent inherits from `core.base_agent.BaseAgent` and implements `get_move(board: Board)`:
 
@@ -31,8 +31,8 @@ class CustomAgent(BaseAgent):
 | Method / Property | Description |
 | :--- | :--- |
 | `board.get_valid_moves()` | Returns list of remaining legal edge IDs. |
-| `board.would_complete_box(edge)` | Returns number of boxes (0, 1, or 2) that would be captured by this edge. |
-| `board.would_give_away_box(edge)` | Returns `True` if playing this edge leaves any adjacent box with 3 sides (giving it away). |
+| `board.would_complete_box(edge)` | Returns number of boxes (0, 1, or 2) captured by this edge. |
+| `board.would_give_away_box(edge)` | Returns `True` if playing this edge leaves any adjacent box with 3 sides. |
 | `board.get_capturable_moves()` | Returns list of moves that immediately capture at least 1 box. |
 | `board.get_safe_moves()` | Returns moves that either capture a box or do not create a 3rd side. |
 | `board.make_move(edge)` | Executes move on the board; returns `(num_captured, extra_turn)`. |
@@ -43,7 +43,7 @@ class CustomAgent(BaseAgent):
 
 ---
 
-## 📌 Module 1: Rule-Based Expert Agent
+## Module 1: Rule-Based Expert Agent
 - **Target File**: `agents/rule_based_agent.py`
 - **Class**: `RuleBasedAgent`
 - **Lead Developer**: Ranjit
@@ -62,7 +62,7 @@ class CustomAgent(BaseAgent):
 
 ---
 
-## 📌 Module 2: Deterministic Search (Minimax + Alpha-Beta)
+## Module 2: Deterministic Search (Minimax + Alpha-Beta)
 - **Target File**: `agents/minimax_agent.py`
 - **Class**: `MinimaxAgent`
 - **Lead Developer**: Shanmukh
@@ -84,7 +84,7 @@ class CustomAgent(BaseAgent):
 
 ---
 
-## 📌 Module 3: Probabilistic Search (MCTS)
+## Module 3: Probabilistic Search (MCTS)
 - **Target File**: `agents/mcts_agent.py`
 - **Class**: `MCTSAgent`
 - **Lead Developer**: Saiyam
@@ -105,7 +105,7 @@ class CustomAgent(BaseAgent):
 
 ---
 
-## 📌 Module 4: Reinforcement Learning (Q-Learning)
+## Module 4: Reinforcement Learning (Q-Learning)
 - **Target File**: `agents/q_learning_agent.py`
 - **Class**: `QLearningAgent`
 - **Lead Developer**: Naman
@@ -123,7 +123,7 @@ class CustomAgent(BaseAgent):
 
 ---
 
-## 🏁 Running the Tournament & Benchmarking
+## Running the Tournament & Benchmarking
 Run the round-robin tournament across all agents:
 ```bash
 python3 run_tournament.py --games 6 --rows 3 --cols 3
