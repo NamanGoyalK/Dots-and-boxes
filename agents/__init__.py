@@ -6,6 +6,7 @@ from .rule_based_agent import RuleBasedAgent
 from .minimax_agent import MinimaxAgent
 from .mcts_agent import MCTSAgent
 from .q_learning_agent import QLearningAgent
+from .dqn_agent import DQNAgent
 
 __all__ = [
     "RandomAgent",
@@ -15,4 +16,5 @@ __all__ = [
     "MinimaxAgent",
     "MCTSAgent",
     "QLearningAgent",
+    "DQNAgent",
 ]

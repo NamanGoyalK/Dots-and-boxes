@@ -69,6 +69,16 @@ class Board:
                     if (r, c) not in self.edge_to_boxes[e]:
                         self.edge_to_boxes[e].append((r, c))
 
+        # Precompute edge transformations for square boards
+        self.sym_edge_map: Dict[Tuple[int, bool], List[int]] = {}
+        if self.rows == self.cols:
+            for rot in range(4):
+                for flip in (False, True):
+                    self.sym_edge_map[(rot, flip)] = [
+                        self._compute_transform_edge(e, rot, flip)
+                        for e in range(self.total_edges)
+                    ]
+
     # --- Edge Coordinate Converters ---
 
     def edge_to_id(self, edge_type: str, r: int, c: int) -> int:
@@ -305,52 +315,55 @@ class Board:
                 mask |= (1 << i)
         return (mask, self.current_player)
 
+    def get_canonical_transformation(self) -> Tuple[int, Tuple[int, bool]]:
+        """
+        For square boards (rows == cols), computes canonical representation
+        by finding the minimum bitmask across all 8 dihedral symmetries (D4),
+        and returns the transformation (rot, flip) that achieves it.
+        Returns:
+            (min_mask, (rot, flip))
+        """
+        if self.rows != self.cols:
+            return self.get_state_key()[0], (0, False)
+            
+        min_mask = None
+        best_trans = (0, False)
+        
+        for (rot, flip), trans_edges in self.sym_edge_map.items():
+            mask = 0
+            for e, drawn in enumerate(self.edges):
+                if drawn:
+                    mask |= (1 << trans_edges[e])
+            if min_mask is None or mask < min_mask:
+                min_mask = mask
+                best_trans = (rot, flip)
+                
+        return min_mask, best_trans
+
     def get_canonical_state(self) -> Tuple[int, int]:
         """
         For square boards (rows == cols), computes canonical representation
         by finding the minimum bitmask across all 8 dihedral symmetries (D4).
         Collapses symmetrical game states by up to 8x for Q-Learning!
         """
-        if self.rows != self.cols:
-            return self.get_state_key()
-            
-        N = self.rows
-        # Compute the 8 symmetries of the edge bitmask
-        min_mask = None
-        current_mask = self.get_state_key()[0]
-        
-        for sym_mask in self._get_symmetric_masks():
-            if min_mask is None or sym_mask < min_mask:
-                min_mask = sym_mask
-                
+        min_mask, _ = self.get_canonical_transformation()
         return (min_mask, self.current_player)
 
     def _get_symmetric_masks(self) -> List[int]:
         """Generate edge bitmasks for all 8 symmetries (4 rotations + reflections)."""
-        # For simplicity and speed, compute mappings if square
-        N = self.rows
-        # We can map coordinates (H/V, r, c) under rotation and reflection:
-        # Rot 90 deg clockwise:
-        # H(r, c) -> V(c, N - r)
-        # V(r, c) -> H(c, N - 1 - r) with adjustment
-        # To make it robust, we construct the symmetric masks:
+        if self.rows != self.cols:
+            return [self.get_state_key()[0]]
         masks = []
-        for rot in range(4):
-            for flip in (False, True):
-                new_edges = [False] * self.total_edges
-                for e, drawn in enumerate(self.edges):
-                    if drawn:
-                        sym_e = self._transform_edge(e, rot, flip)
-                        new_edges[sym_e] = True
-                mask = 0
-                for i, d in enumerate(new_edges):
-                    if d:
-                        mask |= (1 << i)
-                masks.append(mask)
+        for (rot, flip), trans_edges in self.sym_edge_map.items():
+            mask = 0
+            for e, drawn in enumerate(self.edges):
+                if drawn:
+                    mask |= (1 << trans_edges[e])
+            masks.append(mask)
         return masks
 
-    def _transform_edge(self, edge_id: int, rot: int, flip: bool) -> int:
-        """Transform edge under rotation (0, 1, 2, 3 * 90 deg) and horizontal flip."""
+    def _compute_transform_edge(self, edge_id: int, rot: int, flip: bool) -> int:
+        """Compute transform edge under rotation (0..3 * 90 deg) and horizontal flip."""
         etype, r, c = self.id_to_edge(edge_id)
         N = self.rows  # assuming rows == cols
         
@@ -377,6 +390,12 @@ class Board:
                 r, c = new_r, new_c
                 
         return self.edge_to_id(etype, r, c)
+
+    def _transform_edge(self, edge_id: int, rot: int, flip: bool) -> int:
+        """Transform edge under rotation (0, 1, 2, 3 * 90 deg) and horizontal flip."""
+        if hasattr(self, 'sym_edge_map') and (rot, flip) in self.sym_edge_map:
+            return self.sym_edge_map[(rot, flip)][edge_id]
+        return self._compute_transform_edge(edge_id, rot, flip)
 
     # --- Pretty Terminal Representation ---
 

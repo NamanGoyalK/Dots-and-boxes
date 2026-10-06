@@ -1,0 +1,91 @@
+{
+  "rows": 2,
+  "cols": 2,
+  "games_per_matchup": 2,
+  "leaderboard": [
+    {
+      "name": "Alpha-Beta Minimax (Shanmukh)",
+      "games": 10,
+      "wins": 7,
+      "losses": 1,
+      "draws": 2,
+      "win_rate": 70.0,
+      "total_points": 29,
+      "point_diff": 18,
+      "avg_points": 2.9,
+      "avg_time_ms": 0.27809589704809373,
+      "max_time_ms": 0.965694000115036,
+      "rank": 1
+    },
+    {
+      "name": "Greedy Heuristic",
+      "games": 10,
+      "wins": 5,
+      "losses": 3,
+      "draws": 2,
+      "win_rate": 50.0,
+      "total_points": 22,
+      "point_diff": 4,
+      "avg_points": 2.2,
+      "avg_time_ms": 0.0038570000007951866,
+      "max_time_ms": 0.008365999747184105,
+      "rank": 2
+    },
+    {
+      "name": "Q-Learning RL (Naman)",
+      "games": 10,
+      "wins": 4,
+      "losses": 2,
+      "draws": 4,
+      "win_rate": 40.0,
+      "total_points": 26,
+      "point_diff": 12,
+      "avg_points": 2.6,
+      "avg_time_ms": 0.0111970768977279,
+      "max_time_ms": 0.035197000215703156,
+      "rank": 3
+    },
+    {
+      "name": "Rule-Based Expert (Ranjit)",
+      "games": 10,
+      "wins": 4,
+      "losses": 2,
+      "draws": 4,
+      "win_rate": 40.0,
+      "total_points": 24,
+      "point_diff": 8,
+      "avg_points": 2.4,
+      "avg_time_ms": 0.007251609375202861,
+      "max_time_ms": 0.02453599972795928,
+      "rank": 4
+    },
+    {
+      "name": "Monte Carlo Tree Search (Saiyam)",
+      "games": 10,
+      "wins": 3,
+      "losses": 5,
+      "draws": 2,
+      "win_rate": 30.0,
+      "total_points": 15,
+      "point_diff": -10,
+      "avg_points": 1.5,
+      "avg_time_ms": 16.617161836323,
+      "max_time_ms": 42.721802000414755,
+      "rank": 5
+    },
+    {
+      "name": "Random Baseline",
+      "games": 10,
+      "wins": 0,
+      "losses": 10,
+      "draws": 0,
+      "win_rate": 0.0,
+      "total_points": 4,
+      "point_diff": -32,
+      "avg_points": 0.4,
+      "avg_time_ms": 0.0015958223634192515,
+      "max_time_ms": 0.009518000297248363,
+      "rank": 6
+    }
+  ]
+}

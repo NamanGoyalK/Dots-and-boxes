@@ -24,6 +24,7 @@ def parse_args():
     parser.add_argument("--games", type=int, default=6, help="Games per matchup (default: 6)")
     parser.add_argument("--time-limit", type=float, default=5.0, help="Per-move timeout in seconds")
     parser.add_argument("--quick", action="store_true", help="Quick mode (2x2 board, 2 games per matchup)")
+    parser.add_argument("--all-grids", action="store_true", help="Run multi-grid benchmark across 2x2, 3x3, and 4x4")
     parser.add_argument("--export", type=str, default="tournament_results.json", help="Path to export JSON results")
     return parser.parse_args()
 
@@ -31,17 +32,26 @@ def parse_args():
 def main():
     args = parse_args()
     
+    if args.all_grids:
+        import benchmark_all_grids
+        benchmark_all_grids.main()
+        return
+
     rows = 2 if args.quick else args.rows
     cols = 2 if args.quick else args.cols
     games = 2 if args.quick else args.games
+
+    # Scale depth/iterations with grid size for responsive matches
+    minimax_depth = 2 if rows >= 4 else (3 if rows == 3 else 4)
+    mcts_iterations = 75 if rows >= 4 else (150 if rows == 3 else 200)
 
     # Instantiate agents
     agents = [
         RandomAgent("Random Baseline"),
         GreedyAgent("Greedy Heuristic"),
         RuleBasedAgent("Rule-Based Expert (Ranjit)"),
-        MinimaxAgent("Alpha-Beta Minimax (Shanmukh)", max_depth=3 if rows >= 3 else 4),
-        MCTSAgent("Monte Carlo Tree Search (Saiyam)", iterations=150),
+        MinimaxAgent("Alpha-Beta Minimax (Shanmukh)", max_depth=minimax_depth),
+        MCTSAgent("Monte Carlo Tree Search (Saiyam)", iterations=mcts_iterations),
         QLearningAgent("Q-Learning RL (Naman)", epsilon=0.0)
     ]
 
